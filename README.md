@@ -98,3 +98,39 @@ The argument passed to your handler function is the **specific update object** r
 // Run all registered handlers
 $bot->run();
 ```
+
+## Example Boot
+```php
+<?php
+require_once 'Telegram.php';
+
+$bot = new Telegram('123456789:ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+
+// Commands: $this is the bot object, $message is the argument
+$bot->command('/start', function($message) {
+    $this->reply('Hello! 👋');
+});
+
+// Case-sensitive exact text
+$bot->hear('hi bot', function($message) {
+    $this->reply('Hi exactly!');
+});
+
+// Case-insensitive exact text
+$bot->hearCaseInsensitive('Hi Bot', function($message) {
+    $this->reply('Hi (any case)!', ['parse_mode' => 'Markdown']);
+});
+
+// Pre-checkout: $this is the bot object, $query is the argument
+$bot->on('pre_checkout_query', function($query) {
+    // You must still use the full method name for non-reply methods
+    $this->answerPreCheckoutQuery([
+        'pre_checkout_query_id' => $query->id,
+        'ok' => false,
+        'error_message' => 'Out of stock'
+    ]);
+});
+
+// Run all handlers
+$bot->run();
+```
